@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Entrena">
+<meta name="theme-color" content="#0a0a0a">
+<title>Entrena</title>
+<style>
+:root{--bg:#0a0a0a;--bg2:#141414;--bg3:#1e1e1e;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.15);--text:#f0f0f0;--text2:#888;--text3:#555;--green:#4ade80;--green-dim:rgba(74,222,128,0.12);--green-b:rgba(74,222,128,0.3);--amber:#fbbf24;--amber-dim:rgba(251,191,36,0.12);--r:12px;--rs:8px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.app{height:100svh;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.screen{display:none;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 16px 110px}
+.screen.active{display:block}
+.top-bar{padding:48px 0 16px;display:flex;align-items:flex-end;justify-content:space-between}
+.page-title{font-size:24px;font-weight:600;letter-spacing:-0.3px}
+.page-sub{font-size:12px;color:var(--text2);margin-top:2px}
+.icon-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--border2);background:var(--bg2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);flex-shrink:0}
+.icon-btn svg{width:16px;height:16px}
+.bottom-nav{flex-shrink:0;display:flex;border-top:1px solid var(--border);background:var(--bg);padding:8px 8px max(8px,env(safe-area-inset-bottom));gap:4px}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:8px 4px;border-radius:var(--rs);border:none;background:none;color:var(--text3);font-size:10px;font-family:inherit}
+.nav-btn svg{width:20px;height:20px}
+.nav-btn.active{color:var(--green)}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.stat-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rs);padding:12px;text-align:center}
+.stat-val{font-size:22px;font-weight:600}
+.stat-lbl{font-size:11px;color:var(--text3);margin-top:2px}
+.day-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:10px;cursor:pointer}
+.day-card.today{border-color:var(--green-b)}
+.day-card.done{opacity:0.5}
+.day-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px}
+.day-name{font-size:15px;font-weight:500;margin-bottom:8px}
+.tag{display:inline-block;font-size:11px;padding:2px 9px;border-radius:20px}
+.tag-s{background:rgba(168,85,247,0.15);color:#c084fc}
+.tag-m{background:rgba(74,222,128,0.1);color:#4ade80}
+.tag-r{background:rgba(255,255,255,0.06);color:var(--text3)}
+.done-badge{font-size:11px;color:var(--green);margin-top:6px}
+.glaucoma-note{background:var(--amber-dim);border:1px solid rgba(251,191,36,0.25);border-radius:var(--rs);padding:10px 12px;margin-bottom:16px;font-size:12px;color:var(--amber);line-height:1.5}
+.glaucoma-note strong{display:block;margin-bottom:2px;font-size:11px;letter-spacing:0.05em;text-transform:uppercase}
+.prog-wrap{height:3px;background:var(--bg3);border-radius:2px;margin-bottom:20px;overflow:hidden}
+.prog-fill{height:100%;background:var(--green);border-radius:2px;transition:width .3s}
+.ex-row{display:flex;align-items:center;gap:12px;cursor:pointer;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);margin-bottom:8px}
+.ex-row.done-ex{opacity:0.45}
+.ex-num{width:28px;height:28px;border-radius:50%;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text2);flex-shrink:0}
+.ex-num.done{border-color:var(--green);background:var(--green-dim);color:var(--green)}
+.ex-num svg{width:14px;height:14px}
+.ex-info{flex:1}
+.ex-name{font-size:15px;font-weight:500}
+.ex-meta{font-size:12px;color:var(--text2);margin-top:2px}
+.chevron{color:var(--text3);display:flex}
+.chevron svg{width:18px;height:18px}
+.section-label{font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin:18px 0 8px}
+.muscle-pill{display:inline-block;font-size:11px;padding:3px 10px;border-radius:20px;background:var(--bg3);color:var(--text2);margin:2px;border:1px solid var(--border)}
+.glaucoma-warn{display:inline-block;font-size:11px;padding:3px 10px;border-radius:20px;background:var(--amber-dim);color:var(--amber);margin:2px;border:1px solid rgba(251,191,36,0.25)}
+.step-row{display:flex;gap:12px;margin-bottom:10px}
+.step-n{width:22px;height:22px;border-radius:50%;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text3);flex-shrink:0;margin-top:1px}
+.step-t{font-size:14px;line-height:1.55}
+.weight-ctrl{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.weight-num{font-size:32px;font-weight:600}
+.weight-unit{font-size:14px;color:var(--text3)}
+.adj-btns{display:flex;gap:8px}
+.adj{width:44px;height:44px;border-radius:50%;border:1px solid var(--border2);background:var(--bg3);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text);user-select:none}
+.sets-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:4px}
+.set-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rs);padding:10px 4px;text-align:center}
+.set-box.logged{border-color:var(--green-b);background:var(--green-dim)}
+.set-n{font-size:10px;color:var(--text3);margin-bottom:3px}
+.set-v{font-size:12px;font-weight:500}
+.set-box.logged .set-v{color:var(--green)}
+.reps-row{display:flex;gap:8px;margin-bottom:12px}
+.reps-input{flex:1;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rs);padding:12px 16px;font-size:18px;color:var(--text);font-family:inherit;outline:none;-webkit-appearance:none}
+.reps-input:focus{border-color:var(--green-b)}
+.rpe-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:16px}
+.rpe-b{padding:10px 4px;border:1px solid var(--border);border-radius:var(--rs);text-align:center;cursor:pointer;font-size:12px;color:var(--text2);background:var(--bg2)}
+.rpe-b.sel{border-color:var(--green-b);background:var(--green-dim);color:var(--green)}
+.rpe-icon{font-size:16px;margin-bottom:2px}
+.btn{display:block;width:100%;padding:16px;border:none;border-radius:var(--r);font-size:16px;font-weight:500;font-family:inherit;cursor:pointer;text-align:center;margin-bottom:8px}
+.btn-green{background:var(--green);color:#000}
+.btn-outline{background:transparent;border:1px solid var(--border2);color:var(--text2)}
+.rest-center{display:flex;flex-direction:column;align-items:center;padding:40px 0 20px}
+.ring-wrap{position:relative;width:180px;height:180px}
+.ring-svg{position:absolute;top:0;left:0;transform:rotate(-90deg)}
+.ring-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:52px;font-weight:600}
+.rest-next-lbl{font-size:12px;color:var(--text3);margin-top:16px;text-align:center}
+.done-hero{text-align:center;padding:48px 0 24px}
+.done-check{width:64px;height:64px;border-radius:50%;background:var(--green-dim);border:2px solid var(--green-b);display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.done-check svg{width:32px;height:32px;color:var(--green)}
+.ai-box{background:var(--bg2);border:1px solid var(--green-b);border-radius:var(--r);padding:16px;margin-bottom:16px;font-size:14px;line-height:1.6}
+.ai-box::before{content:'IA ·';font-size:10px;color:var(--green);display:block;margin-bottom:8px;letter-spacing:0.08em}
+.hist-row{padding:14px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start}
+.hist-name{font-size:14px;font-weight:500}
+.hist-date{font-size:11px;color:var(--text3);margin-top:3px}
+.hist-stats{font-size:12px;color:var(--text2);text-align:right}
+.prog-row-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)}
+.prog-right{font-size:13px;display:flex;gap:8px;align-items:center}
+.up{color:var(--green)}
+.same-c{color:var(--text3)}
+.dot-anim::after{content:'...';animation:dots 1.2s infinite steps(4)}
+@keyframes dots{0%{content:'.'}33%{content:'..'}66%{content:'...'}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+
+    <!-- HOME -->
+    <div class="screen active" id="s-home">
+      <div class="top-bar">
+        <div>
+          <div class="page-title">Entrena</div>
+          <div class="page-sub">Semana <span id="week-num">1</span> · Adaptado glaucoma</div>
+        </div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-val" id="h-sessions">0</div><div class="stat-lbl">sesiones</div></div>
+        <div class="stat-box"><div class="stat-val" id="h-vol">0</div><div class="stat-lbl">kg vol.</div></div>
+        <div class="stat-box"><div class="stat-val" id="h-streak">0</div><div class="stat-lbl">días</div></div>
+      </div>
+      <div id="day-grid"></div>
+    </div>
+
+    <!-- DAY -->
+    <div class="screen" id="s-day">
+      <div class="top-bar">
+        <div>
+          <div class="page-title" id="day-title"></div>
+          <div class="page-sub" id="day-sub"></div>
+        </div>
+        <div class="icon-btn" onclick="goTo('s-home')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </div>
+      </div>
+      <div class="prog-wrap"><div class="prog-fill" id="day-bar" style="width:0%"></div></div>
+      <div id="ex-list"></div>
+      <button class="btn btn-green" onclick="startNext()">Empezar / continuar</button>
+    </div>
+
+    <!-- EXERCISE -->
+    <div class="screen" id="s-exercise">
+      <div class="top-bar">
+        <div>
+          <div class="page-title" id="ex-title"></div>
+          <div class="page-sub" id="ex-sub"></div>
+        </div>
+        <div class="icon-btn" onclick="goTo('s-day')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        </div>
+      </div>
+      <div id="glaucoma-alert"></div>
+      <div class="section-label">Músculos</div>
+      <div id="ex-muscles" style="margin-bottom:4px"></div>
+      <div class="section-label">Ejecución</div>
+      <div id="ex-steps"></div>
+      <div class="section-label">Peso de trabajo</div>
+      <div class="weight-ctrl">
+        <div><span class="weight-num" id="w-current">0</span> <span class="weight-unit">kg</span></div>
+        <div class="adj-btns">
+          <div class="adj" onclick="adjW(-1.25)">−</div>
+          <div class="adj" onclick="adjW(1.25)">+</div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:4px;padding:0 2px">Ajusta con + / − · se guarda automáticamente</div>
+      <div class="section-label">Series completadas</div>
+      <div class="sets-grid" id="sets-grid"></div>
+      <div class="section-label">Reps realizadas</div>
+      <div class="reps-row">
+        <input class="reps-input" type="number" id="inp-reps" placeholder="10" min="1" max="50" inputmode="numeric">
+        <button class="btn btn-green" style="width:auto;padding:12px 20px;margin:0" onclick="logSet()">+ Serie</button>
+      </div>
+      <div class="section-label">Esfuerzo percibido</div>
+      <div class="rpe-grid">
+        <div class="rpe-b" onclick="selRPE(this,'easy')"><div class="rpe-icon">😌</div>Fácil</div>
+        <div class="rpe-b" onclick="selRPE(this,'ok')"><div class="rpe-icon">💪</div>Bien</div>
+        <div class="rpe-b" onclick="selRPE(this,'hard')"><div class="rpe-icon">🔥</div>Duro</div>
+        <div class="rpe-b" onclick="selRPE(this,'fail')"><div class="rpe-icon">😤</div>Fallé</div>
+      </div>
+      <button class="btn btn-outline" onclick="finishEx()">Ejercicio completado →</button>
+    </div>
+
+    <!-- REST -->
+    <div class="screen" id="s-rest">
+      <div class="top-bar">
+        <div>
+          <div class="page-title">Descanso</div>
+          <div class="page-sub">Recuperando entre series</div>
+        </div>
+      </div>
+      <div class="rest-center">
+        <div class="ring-wrap">
+          <svg class="ring-svg" width="180" height="180" viewBox="0 0 180 180">
+            <circle cx="90" cy="90" r="78" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8"/>
+            <circle cx="90" cy="90" r="78" fill="none" stroke="#4ade80" stroke-width="8" stroke-dasharray="490" stroke-dashoffset="0" id="rest-circle" stroke-linecap="round"/>
+          </svg>
+          <div class="ring-num" id="rest-count">60</div>
+        </div>
+        <div class="rest-next-lbl">Próxima serie en breve</div>
+      </div>
+      <button class="btn btn-outline" onclick="skipRest()">Saltar descanso</button>
+    </div>
+
+    <!-- DONE -->
+    <div class="screen" id="s-done">
+      <div class="done-hero">
+        <div class="done-check">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div style="font-size:22px;font-weight:600">Sesión completada</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:4px" id="done-name"></div>
+      </div>
+      <div class="ai-box" id="ai-box"><span class="dot-anim">Analizando sesión</span></div>
+      <div class="stats-row" style="margin-bottom:20px">
+        <div class="stat-box"><div class="stat-val" id="d-ex">0</div><div class="stat-lbl">ejercicios</div></div>
+        <div class="stat-box"><div class="stat-val" id="d-sets">0</div><div class="stat-lbl">series</div></div>
+        <div class="stat-box"><div class="stat-val" id="d-vol">0</div><div class="stat-lbl">kg vol.</div></div>
+      </div>
+      <button class="btn btn-green" onclick="goTo('s-home')">Volver al inicio</button>
+    </div>
+
+    <!-- HISTORY -->
+    <div class="screen" id="s-history">
+      <div class="top-bar"><div><div class="page-title">Historial</div><div class="page-sub">Sesiones registradas</div></div></div>
+      <div id="hist-list"></div>
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="screen" id="s-progress">
+      <div class="top-bar"><div><div class="page-title">Progresión</div><div class="page-sub">Evolución de pesos</div></div></div>
+      <div id="prog-list"></div>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" id="nav-home" onclick="navTo('s-home','nav-home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Inicio
+    </button>
+    <button class="nav-btn" id="nav-history" onclick="navTo('s-history','nav-history')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Historial
+    </button>
+    <button class="nav-btn" id="nav-progress" onclick="navTo('s-progress','nav-progress')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Progresión
+    </button>
+  </nav>
+</div>
+
+<script>
+// g: true = aviso glaucoma en ese ejercicio
+var WEEK=[
+  {label:"Lunes",name:"Pecho + Tríceps",type:"strength",exercises:[
+    {name:"Press con mancuernas",sets:3,reps:"8-10",rest:90,dw:6,muscles:["Pecho","Tríceps","Hombro anterior"],g:false,steps:["Túmbate en el suelo. Mancuernas a la altura del pecho, codos a 45°.","Empuja hacia arriba espirando. No bloquees los codos al final.","Baja en 3 segundos inspirando. Cabeza siempre apoyada en el suelo.","Nunca aguantes la respiración: espira al subir, inspira al bajar."]},
+    {name:"Flexiones en pared",sets:3,reps:"8-10",rest:60,dw:0,muscles:["Pecho","Tríceps","Core"],g:false,steps:["De pie frente a la pared, manos a la altura del pecho, brazos extendidos.","Dobla los codos llevando el pecho hacia la pared lentamente.","Empuja de vuelta espirando. Cuerpo recto de cabeza a talones.","Ventaja frente a la flexión en suelo: la cabeza queda siempre por encima del corazón."]},
+    {name:"Extensiones de tríceps sentado",sets:3,reps:"10",rest:60,dw:6,muscles:["Tríceps"],g:false,steps:["Sentado en una silla con respaldo. Sujeta una mancuerna con ambas manos sobre la cabeza.","Flexiona los codos bajando la mancuerna detrás de la cabeza. Codos pegados.","Extiende espirando. Sin mover los hombros ni arquear la espalda.","Mantén la cabeza recta y la mirada al frente en todo momento."]},
+    {name:"Aperturas con mancuernas",sets:3,reps:"10",rest:60,dw:5,muscles:["Pecho","Hombro anterior"],g:false,steps:["Tumbado en el suelo, brazos extendidos, ligera flexión de codo.","Abre los brazos lateralmente en arco amplio. Inspira al bajar.","Para cuando sientas estiramiento en el pecho. Sin forzar.","Cierra los brazos espirando. Cabeza siempre apoyada."]}
+  ]},
+  {label:"Martes",name:"Movilidad + Espalda alta",type:"mobility",exercises:[
+    {name:"Cat-Cow sentado",sets:3,reps:"10",rest:30,dw:0,muscles:["Columna","Core"],g:false,steps:["Sentado en una silla, pies apoyados. Manos en las rodillas.","Inspira arqueando la espalda hacia adelante y sacando pecho (vaca).","Espira redondeando la espalda y dejando caer los hombros (gato).","Versión segura para glaucoma: evita la posición a cuatro patas con cabeza colgando."]},
+    {name:"Remo con banda sentado",sets:3,reps:"12",rest:60,dw:0,muscles:["Espalda","Bíceps","Romboides"],g:false,steps:["Sentado, pasa la banda por los pies y agarra un extremo con cada mano.","Tira hacia el torso juntando los omóplatos. Codos a 45°.","Aguanta 1 segundo en contracción y vuelve controladamente.","Mantén la espalda recta y la cabeza en posición neutra durante todo el movimiento."]},
+    {name:"Puente de glúteo",sets:3,reps:"15",rest:45,dw:0,muscles:["Glúteo","Lumbar","Isquiotibiales"],g:false,steps:["Tumbado boca arriba, rodillas flexionadas, pies apoyados. Cabeza relajada en el suelo.","Aprieta el glúteo y eleva la cadera hasta línea recta. Espira al subir.","Aguanta 1 segundo arriba. Sin aguantar la respiración.","Baja lentamente inspirando. Este ejercicio es seguro: la cabeza permanece en el suelo."]},
+    {name:"Rotación torácica sentado",sets:2,reps:"8 c/lado",rest:30,dw:0,muscles:["Torácica","Core"],g:false,steps:["Sentado en una silla, brazos cruzados sobre el pecho.","Gira el torso hacia la derecha lo máximo posible sin mover la cadera.","Mantén 2 segundos y vuelve al centro. Repite al otro lado.","Movimiento lento y controlado. Cabeza sigue la dirección del torso."]}
+  ]},
+  {label:"Miércoles",name:"Piernas + Glúteo",type:"strength",exercises:[
+    {name:"Sentadilla con mancuernas",sets:3,reps:"10",rest:90,dw:8,muscles:["Cuádriceps","Glúteo","Core"],g:false,steps:["Pies a anchura de hombros, mancuernas a los lados. Cabeza recta, mirada al frente.","Baja como si fueras a sentarte en una silla. Rodillas siguen la dirección de los pies.","Baja solo hasta donde la espalda permanezca recta. Sin inclinar el torso.","Sube espirando, empujando el suelo con los talones. Nunca aguantes la respiración."]},
+    {name:"Peso muerto con mancuernas limitado",sets:3,reps:"10",rest:90,dw:8,muscles:["Isquiotibiales","Glúteo","Lumbar"],g:true,steps:["De pie, mancuernas frente a los muslos. IMPORTANTE: inclínate solo hasta que las mancuernas lleguen a la rodilla, no más abajo.","La inclinación profunda con cabeza hacia abajo eleva la presión ocular. Rango parcial es suficiente.","Bisagra de cadera controlada: espalda recta, rodillas ligeramente flexionadas.","Sube activando glúteos. Espira al subir, inspira al bajar. Nunca aguantes la respiración."]},
+    {name:"Sentadilla lateral (suave)",sets:3,reps:"8 c/lado",rest:60,dw:0,muscles:["Aductores","Glúteo","Cuádriceps"],g:false,steps:["De pie, pies juntos. Da un paso lateral pequeño-moderado con el pie derecho.","Flexiona levemente la rodilla derecha. Sin bajar demasiado — rango cómodo.","Vuelve al centro empujando con el talón. Tronco erguido durante todo el movimiento.","Empieza con rango pequeño e incrementa progresivamente."]},
+    {name:"Elevación de gemelos de pie",sets:3,reps:"15",rest:45,dw:0,muscles:["Gemelo","Sóleo"],g:false,steps:["De pie cerca de la pared o silla para apoyarte. Pies paralelos.","Eleva los talones subiendo de puntillas. Espira al subir.","Aguanta 1 segundo arriba.","Baja en 2-3 segundos inspirando."]}
+  ]},
+  {label:"Jueves",name:"Movilidad + Hombros",type:"mobility",exercises:[
+    {name:"Círculos de hombro de pie",sets:2,reps:"10 c/lado",rest:20,dw:0,muscles:["Hombro","Manguito rotador"],g:false,steps:["De pie, brazo extendido al lado del cuerpo.","Dibuja círculos amplios hacia adelante. Movimiento lento y controlado.","Aumenta el tamaño del círculo progresivamente.","Cambia de dirección. Cabeza recta, respiración tranquila."]},
+    {name:"Press hombro sentado",sets:3,reps:"10",rest:75,dw:5,muscles:["Hombro","Tríceps","Trapecio"],g:false,steps:["Sentado con respaldo, mancuernas a la altura de los hombros, codos a 90°.","Empuja hacia arriba espirando. No bloquees los codos al llegar arriba.","Baja controladamente en 2-3 segundos inspirando.","Sentado con respaldo: evita el arqueo lumbar y mantén la cabeza neutra."]},
+    {name:"Elevaciones laterales sentado",sets:3,reps:"12",rest:60,dw:3,muscles:["Deltoides lateral"],g:false,steps:["Sentado, mancuernas a los lados con ligera flexión de codo.","Eleva los brazos lateralmente hasta la altura de los hombros espirando.","El movimiento sale del hombro. No encorves el cuello.","Baja en 3 segundos inspirando. Sin balancear el torso."]},
+    {name:"Estiramiento de cuello y hombros",sets:2,reps:"30s c/lado",rest:15,dw:0,muscles:["Cuello","Trapecio","Hombro"],g:false,steps:["Sentado, inclina la cabeza hacia el hombro derecho suavemente.","Puedes ayudarte con la mano derecha aplicando presión muy suave.","Mantén 30 segundos respirando profundo. Sin forzar.","Repite al otro lado. Estiramiento seguro y relajante."]}
+  ]},
+  {label:"Viernes",name:"Espalda + Bíceps",type:"strength",exercises:[
+    {name:"Remo a una mano apoyado",sets:3,reps:"10 c/lado",rest:75,dw:8,muscles:["Dorsal","Bíceps","Romboides"],g:false,steps:["Apoya la mano y rodilla del mismo lado en una silla o banco. Espalda paralela al suelo.","Mancuerna en el brazo libre. Cabeza en posición neutra, mirando al suelo.","Tira del codo hacia arriba y atrás juntando el omóplato. Espira al subir.","Baja controladamente. Evita girar el torso. Respira de forma continua."]},
+    {name:"Curl de bíceps sentado",sets:3,reps:"10 c/lado",rest:60,dw:6,muscles:["Bíceps","Braquial"],g:false,steps:["Sentado en una silla con respaldo. Mancuerna en una mano, brazo extendido.","Flexiona el codo girando la palma hacia arriba al subir. Espira al subir.","Lleva la mancuerna al hombro sin mover el codo ni arquear la espalda.","Baja en 3 segundos inspirando. Repite con el otro brazo."]},
+    {name:"Jalón con banda sentado",sets:3,reps:"12",rest:60,dw:0,muscles:["Dorsal","Bíceps"],g:false,steps:["Sentado, fija la banda en alto (puerta). Agarra los extremos con brazos extendidos.","Tira hacia abajo llevando los codos hacia las costillas. Espira al tirar.","Junta los omóplatos al final del movimiento.","Vuelve lentamente resistiendo la tensión. Cabeza recta en todo momento."]},
+    {name:"Extensión de cadera en pie",sets:3,reps:"12 c/lado",rest:45,dw:0,muscles:["Glúteo","Lumbar"],g:false,steps:["De pie, apoyado en la pared o silla con ambas manos. Tronco ligeramente inclinado.","Lleva una pierna hacia atrás y arriba, apretando el glúteo al subir. Espira.","Baja lentamente. Sin arquear la zona lumbar ni inclinar el tronco hacia adelante.","Alternativa segura al Superman: trabaja los mismos músculos sin posición boca abajo."]}
+  ]},
+  {label:"Sábado",name:"Movilidad completa",type:"mobility",exercises:[
+    {name:"Movilidad de pie (secuencia)",sets:3,reps:"5 ciclos",rest:30,dw:0,muscles:["Cuerpo completo"],g:false,steps:["De pie, inspira elevando los brazos por encima de la cabeza.","Espira bajando los brazos y doblando ligeramente las rodillas (no inclines el torso hacia abajo).","Estira lateralmente un brazo arriba mientras el otro baja. Alterna lados.","Versión adaptada: evita flexionar el torso hacia el suelo para no bajar la cabeza."]},
+    {name:"Estiramiento de cadera sentado",sets:2,reps:"45s c/lado",rest:20,dw:0,muscles:["Glúteo","Piriforme","Flexor cadera"],g:false,steps:["Sentado en una silla, cruza el tobillo derecho sobre la rodilla izquierda (postura '4').","Inclínate ligeramente hacia adelante desde la cadera hasta sentir el estiramiento en el glúteo.","Mantén 45 segundos respirando profundo. Sin forzar.","Versión segura al estiramiento de paloma: mismos beneficios sin ir al suelo."]},
+    {name:"Movilidad de tobillo sentado",sets:2,reps:"10 c/lado",rest:15,dw:0,muscles:["Tobillo","Gemelo"],g:false,steps:["Sentado en una silla. Levanta ligeramente el pie del suelo.","Dibuja círculos amplios con el pie, primero hacia dentro.","Cambia de dirección. 10 círculos en cada sentido.","Ejercicio 100% seguro: sin carga, sentado, sin cambios de presión."]},
+    {name:"Respiración diafragmática",sets:3,reps:"5 respiraciones",rest:10,dw:0,muscles:["Diafragma","Core","Sistema nervioso"],g:false,steps:["Sentado o tumbado boca arriba. Una mano en el pecho, otra en el abdomen.","Inspira en 4 tiempos dejando que suba solo el abdomen. El pecho quieto.","Retén 2 tiempos (sin forzar).","Espira en 6 tiempos vaciando completamente. Excelente para reducir la tensión ocular."]}
+  ]},
+  {label:"Domingo",name:"Descanso activo",type:"rest",exercises:[]}
+];
+
+var ICO_CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+var ICO_CHEV='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+
+var ST={currentDay:0,currentEx:0,currentWeight:0,currentRPE:null,sessionSets:{},history:[],weights:{},completedDays:[],weekNum:1};
+
+function save(){try{localStorage.setItem('entrena_v3',JSON.stringify(ST));}catch(e){}}
+function load(){try{var r=localStorage.getItem('entrena_v3');if(r){var p=JSON.parse(r);ST=Object.assign({},ST,p);}}catch(e){}}
+function getW(di,ei){var k=di+'_'+ei;return ST.weights[k]!==undefined?ST.weights[k]:WEEK[di].exercises[ei].dw;}
+function setW(di,ei,w){ST.weights[di+'_'+ei]=Math.max(0,Math.round(w*4)/4);save();}
+
+function goTo(id){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.getElementById(id).classList.add('active');
+  if(id==='s-home')renderHome();
+  if(id==='s-history')renderHistory();
+  if(id==='s-progress')renderProg();
+}
+
+function navTo(screenId,navId){
+  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
+  document.getElementById(navId).classList.add('active');
+  goTo(screenId);
+}
+
+function renderHome(){
+  var grid=document.getElementById('day-grid');
+  grid.innerHTML='';
+  var today=new Date().getDay();
+  var map=[1,2,3,4,5,6,0];
+  WEEK.forEach(function(day,i){
+    var done=ST.completedDays.indexOf(i)>=0;
+    var isToday=today===map[i];
+    var tagClass=day.type==='strength'?'tag-s':day.type==='mobility'?'tag-m':'tag-r';
+    var tagText=day.type==='strength'?'Fuerza':day.type==='mobility'?'Movilidad':'Descanso';
+    var card=document.createElement('div');
+    card.className='day-card'+(isToday?' today':'')+(done?' done':'');
+    card.innerHTML='<div class="day-label">'+day.label+(isToday?' · HOY':'')+'</div><div class="day-name">'+day.name+'</div><span class="tag '+tagClass+'">'+tagText+'</span>'+(done?'<div class="done-badge">✓ Completado</div>':'');
+    if(day.type!=='rest'){card.onclick=(function(idx){return function(){openDay(idx);};})(i);}
+    grid.appendChild(card);
+  });
+  var totalVol=ST.history.reduce(function(a,s){return a+(s.volume||0);},0);
+  document.getElementById('h-sessions').textContent=ST.history.length;
+  document.getElementById('h-vol').textContent=Math.round(totalVol);
+  document.getElementById('h-streak').textContent=ST.completedDays.length;
+  document.getElementById('week-num').textContent=ST.weekNum;
+}
+
+function openDay(di){
+  ST.currentDay=di;ST.sessionSets={};
+  var day=WEEK[di];
+  document.getElementById('day-title').textContent=day.name;
+  document.getElementById('day-sub').textContent=day.label+' · '+day.exercises.length+' ejercicios';
+  renderExList();goTo('s-day');
+}
+
+function renderExList(){
+  var day=WEEK[ST.currentDay];
+  var list=document.getElementById('ex-list');
+  list.innerHTML='';
+  var doneC=0;
+  day.exercises.forEach(function(_,i){if(ST.sessionSets[i]&&ST.sessionSets[i].done)doneC++;});
+  document.getElementById('day-bar').style.width=(day.exercises.length?doneC/day.exercises.length*100:0)+'%';
+  day.exercises.forEach(function(ex,i){
+    var done=ST.sessionSets[i]&&ST.sessionSets[i].done;
+    var w=getW(ST.currentDay,i);
+    var row=document.createElement('div');
+    row.className='ex-row'+(done?' done-ex':'');
+    row.innerHTML='<div class="ex-num '+(done?'done':'')+'">'+( done?ICO_CHECK:(i+1))+'</div><div class="ex-info"><div class="ex-name">'+ex.name+'</div><div class="ex-meta">'+ex.sets+'s · '+ex.reps+'r'+(w?' · '+w+'kg':'')+'</div></div><div class="chevron">'+ICO_CHEV+'</div>';
+    row.onclick=(function(idx){return function(){openEx(idx);};})(i);
+    list.appendChild(row);
+  });
+}
+
+function startNext(){
+  var day=WEEK[ST.currentDay];
+  var next=-1;
+  for(var i=0;i<day.exercises.length;i++){if(!ST.sessionSets[i]||!ST.sessionSets[i].done){next=i;break;}}
+  if(next>=0)openEx(next);
+}
+
+function openEx(ei){
+  ST.currentEx=ei;ST.currentRPE=null;
+  var ex=WEEK[ST.currentDay].exercises[ei];
+  ST.currentWeight=getW(ST.currentDay,ei);
+  document.getElementById('ex-title').textContent=ex.name;
+  document.getElementById('ex-sub').textContent=ex.sets+' series · '+ex.reps+' reps';
+  document.getElementById('ex-muscles').innerHTML=ex.muscles.map(function(m){return '<span class="muscle-pill">'+m+'</span>';}).join('');
+
+  // Glaucoma warning per exercise
+  var alertEl=document.getElementById('glaucoma-alert');
+  if(ex.g){
+    alertEl.innerHTML='<div class="glaucoma-note"><strong>⚠ Atención · Glaucoma</strong>Lee las instrucciones con cuidado. Este ejercicio tiene una modificación específica para ti.</div>';
+  } else {
+    alertEl.innerHTML='';
+  }
+
+  document.getElementById('ex-steps').innerHTML=ex.steps.map(function(s,i){return '<div class="step-row"><div class="step-n">'+(i+1)+'</div><div class="step-t">'+s+'</div></div>';}).join('');
+  document.getElementById('w-current').textContent=ST.currentWeight;
+  document.querySelectorAll('.rpe-b').forEach(function(b){b.classList.remove('sel');});
+  document.getElementById('inp-reps').value='';
+  renderSets();goTo('s-exercise');
+}
+
+function adjW(delta){
+  ST.currentWeight=Math.max(0,Math.round((ST.currentWeight+delta)*4)/4);
+  document.getElementById('w-current').textContent=ST.currentWeight;
+  setW(ST.currentDay,ST.currentEx,ST.currentWeight);
+}
+
+function renderSets(){
+  var ex=WEEK[ST.currentDay].exercises[ST.currentEx];
+  var saved=(ST.sessionSets[ST.currentEx]&&ST.sessionSets[ST.currentEx].sets)||[];
+  var grid=document.getElementById('sets-grid');
+  grid.innerHTML='';
+  for(var i=0;i<ex.sets;i++){
+    var s=saved[i];
+    var b=document.createElement('div');
+    b.className='set-box'+(s?' logged':'');
+    b.innerHTML='<div class="set-n">S'+(i+1)+'</div><div class="set-v">'+(s?s.reps+'r'+(s.w?' '+s.w+'k':''):'—')+'</div>';
+    grid.appendChild(b);
+  }
+}
+
+function selRPE(el,val){
+  document.querySelectorAll('.rpe-b').forEach(function(b){b.classList.remove('sel');});
+  el.classList.add('sel');ST.currentRPE=val;
+}
+
+function logSet(){
+  var ex=WEEK[ST.currentDay].exercises[ST.currentEx];
+  var reps=parseInt(document.getElementById('inp-reps').value);
+  if(!reps||reps<1)return;
+  if(!ST.sessionSets[ST.currentEx])ST.sessionSets[ST.currentEx]={sets:[]};
+  var sets=ST.sessionSets[ST.currentEx].sets;
+  if(sets.length<ex.sets){
+    sets.push({reps:reps,w:ST.currentWeight});
+    renderSets();
+    document.getElementById('inp-reps').value='';
+    if(sets.length<ex.sets)startRest(ex.rest);
+  }
+}
+
+function finishEx(){
+  var ei=ST.currentEx,di=ST.currentDay;
+  if(!ST.sessionSets[ei])ST.sessionSets[ei]={sets:[]};
+  ST.sessionSets[ei].done=true;
+  var rpe=ST.currentRPE,cw=getW(di,ei);
+  if(cw>0){
+    if(rpe==='easy')setW(di,ei,cw+2.5);
+    else if(rpe==='ok')setW(di,ei,cw+1.25);
+    else if(rpe==='fail')setW(di,ei,Math.max(0,cw-1.25));
+  }
+  var day=WEEK[di];
+  var allDone=true;
+  for(var i=0;i<day.exercises.length;i++){if(!ST.sessionSets[i]||!ST.sessionSets[i].done){allDone=false;break;}}
+  if(allDone){if(ST.completedDays.indexOf(di)===-1)ST.completedDays.push(di);finishSession();}
+  else{renderExList();goTo('s-day');}
+  save();
+}
+
+function finishSession(){
+  var day=WEEK[ST.currentDay];
+  var totalSets=0,totalVol=0;
+  day.exercises.forEach(function(_,i){
+    var sets=(ST.sessionSets[i]&&ST.sessionSets[i].sets)||[];
+    totalSets+=sets.length;
+    sets.forEach(function(s){totalVol+=(s.reps||0)*(s.w||0);});
+  });
+  ST.history.unshift({date:new Date().toLocaleDateString('es-ES',{day:'numeric',month:'short'}),dayName:day.name,exercises:day.exercises.length,sets:totalSets,volume:totalVol});
+  save();
+  document.getElementById('done-name').textContent=day.label+' · '+day.name;
+  document.getElementById('d-ex').textContent=day.exercises.length;
+  document.getElementById('d-sets').textContent=totalSets;
+  document.getElementById('d-vol').textContent=Math.round(totalVol);
+  document.getElementById('ai-box').innerHTML='<span class="dot-anim">Analizando sesión</span>';
+  goTo('s-done');
+  getFeedback(day.name,totalSets,Math.round(totalVol),ST.currentRPE).then(function(t){
+    document.getElementById('ai-box').textContent=t;
+  });
+}
+
+function getFeedback(dayName,sets,vol,rpe){
+  return fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:'Eres un entrenador personal conciso. El usuario tiene glaucoma y sigue una rutina adaptada. Completó "'+dayName+'": '+sets+' series, '+vol+' kg de volumen total. RPE: '+(rpe||'no indicado')+'. Da feedback motivador en 2-3 frases. Sin emojis. Sin saludos. En español. Si easy sube peso, si fail baja peso, si ok o hard felicítale.'}]})})
+  .then(function(r){return r.json();})
+  .then(function(d){return(d.content&&d.content[0]&&d.content[0].text)||'Buena sesión. La constancia es la clave.';})
+  .catch(function(){return 'Sesión completada. Sigue con la constancia.';});
+}
+
+function renderHistory(){
+  var list=document.getElementById('hist-list');
+  if(!ST.history.length){list.innerHTML='<div style="color:var(--text3);font-size:14px;padding:1rem 0">Sin sesiones aún.</div>';return;}
+  list.innerHTML=ST.history.map(function(s){return '<div class="hist-row"><div><div class="hist-name">'+s.dayName+'</div><div class="hist-date">'+s.date+'</div></div><div class="hist-stats">'+s.sets+' series<br>'+Math.round(s.volume)+' kg</div></div>';}).join('');
+}
+
+function renderProg(){
+  var list=document.getElementById('prog-list');
+  var rows=[];
+  WEEK.forEach(function(day,di){
+    day.exercises.forEach(function(ex,ei){
+      if(ex.dw>0){var cur=getW(di,ei);rows.push({name:ex.name,ini:ex.dw,cur:cur,diff:cur-ex.dw});}
+    });
+  });
+  if(!rows.length){list.innerHTML='<div style="color:var(--text3);font-size:14px;padding:1rem 0">Completa sesiones para ver la progresión.</div>';return;}
+  list.innerHTML=rows.map(function(r){return '<div class="prog-row-item"><div style="font-size:13px">'+r.name+'</div><div class="prog-right"><span style="color:var(--text3)">'+r.ini+'→</span><span class="'+(r.diff>0?'up':'same-c')+'">'+r.cur+'kg'+(r.diff>0?' ↑':'')+'</span></div></div>';}).join('');
+}
+
+var restTimer=null;
+function startRest(secs){
+  if(restTimer)clearInterval(restTimer);
+  var rem=secs;
+  document.getElementById('rest-count').textContent=rem;
+  var circle=document.getElementById('rest-circle');
+  circle.style.strokeDashoffset='0';
+  restTimer=setInterval(function(){
+    rem--;
+    document.getElementById('rest-count').textContent=rem;
+    circle.style.strokeDashoffset=490*(1-rem/secs);
+    if(rem<=0){clearInterval(restTimer);goTo('s-exercise');}
+  },1000);
+  goTo('s-rest');
+}
+function skipRest(){if(restTimer)clearInterval(restTimer);goTo('s-exercise');}
+
+load();
+renderHome();
+</script>
+</body>
+</html>
