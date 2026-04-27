@@ -8,6 +8,33 @@
 <meta name="apple-mobile-web-app-title" content="Entrena">
 <meta name="theme-color" content="#0a0a0a">
 <title>Entrena</title>
+<link rel="manifest" id="pwa-manifest">
+<link rel="apple-touch-icon" id="apple-icon">
+<script>
+(function(){
+  var iconB64 = "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiI+CiAgPCEtLSBCYWNrZ3JvdW5kIC0tPgogIDxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiByeD0iMTEwIiBmaWxsPSIjMGEwYTBhIi8+CiAgCiAgPCEtLSBQYXJhbW90b3Igd2luZyBhcmMgLS0+CiAgPHBhdGggZD0iTTgwIDIwMCBRMTYwIDEyMCAyNTYgMTE1IFEzNTIgMTIwIDQzMiAyMDAiIHN0cm9rZT0iIzRhZGU4MCIgc3Ryb2tlLXdpZHRoPSIxOCIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPCEtLSBXaW5nIHJpYnMgLS0+CiAgPGxpbmUgeDE9IjE0MCIgeTE9IjE1MiIgeDI9IjE2MCIgeTI9IjIyMCIgc3Ryb2tlPSIjNGFkZTgwIiBzdHJva2Utd2lkdGg9IjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgb3BhY2l0eT0iMC42Ii8+CiAgPGxpbmUgeDE9IjE5NiIgeTE9IjEyOCIgeDI9IjIxMCIgeTI9IjIyMCIgc3Ryb2tlPSIjNGFkZTgwIiBzdHJva2Utd2lkdGg9IjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgb3BhY2l0eT0iMC42Ii8+CiAgPGxpbmUgeDE9IjI1NiIgeTE9IjEyMCIgeDI9IjI1NiIgeTI9IjIyMCIgc3Ryb2tlPSIjNGFkZTgwIiBzdHJva2Utd2lkdGg9IjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgb3BhY2l0eT0iMC42Ii8+CiAgPGxpbmUgeDE9IjMxNiIgeTE9IjEyOCIgeDI9IjMwMiIgeTI9IjIyMCIgc3Ryb2tlPSIjNGFkZTgwIiBzdHJva2Utd2lkdGg9IjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgb3BhY2l0eT0iMC42Ii8+CiAgPGxpbmUgeDE9IjM3MiIgeTE9IjE1MiIgeDI9IjM1MiIgeTI9IjIyMCIgc3Ryb2tlPSIjNGFkZTgwIiBzdHJva2Utd2lkdGg9IjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgb3BhY2l0eT0iMC42Ii8+CgogIDwhLS0gSGFybmVzcyBsaW5lcyAtLT4KICA8bGluZSB4MT0iMTYwIiB5MT0iMjIwIiB4Mj0iMjU2IiB5Mj0iMjkwIiBzdHJva2U9InJnYmEoNzQsMjIyLDEyOCwwLjQpIiBzdHJva2Utd2lkdGg9IjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxsaW5lIHgxPSIzNTIiIHkxPSIyMjAiIHgyPSIyNTYiIHkyPSIyOTAiIHN0cm9rZT0icmdiYSg3NCwyMjIsMTI4LDAuNCkiIHN0cm9rZS13aWR0aD0iNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CgogIDwhLS0gUGlsb3QgYm9keSAtLT4KICA8ZWxsaXBzZSBjeD0iMjU2IiBjeT0iMzEwIiByeD0iMjgiIHJ5PSIzNiIgZmlsbD0iIzFlMWUxZSIgc3Ryb2tlPSIjNGFkZTgwIiBzdHJva2Utd2lkdGg9IjYiLz4KICA8IS0tIFBpbG90IGhlYWQgLS0+CiAgPGNpcmNsZSBjeD0iMjU2IiBjeT0iMjY4IiByPSIyMCIgZmlsbD0iIzRhZGU4MCIvPgogIDwhLS0gSGVsbWV0IHZpc29yIC0tPgogIDxwYXRoIGQ9Ik0yNDIgMjY0IFEyNTYgMjc0IDI3MCAyNjQiIHN0cm9rZT0iIzBhMGEwYSIgc3Ryb2tlLXdpZHRoPSI0IiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KCiAgPCEtLSBEdW1iYmVsbCBoZWxkIGJ5IHBpbG90IC0tPgogIDwhLS0gTGVmdCB3ZWlnaHQgcGxhdGUgLS0+CiAgPHJlY3QgeD0iMTM4IiB5PSIzMjIiIHdpZHRoPSIyMiIgaGVpZ2h0PSIzOCIgcng9IjUiIGZpbGw9IiM0YWRlODAiLz4KICA8cmVjdCB4PSIxMjgiIHk9IjMyOCIgd2lkdGg9IjEyIiBoZWlnaHQ9IjI2IiByeD0iNCIgZmlsbD0iIzRhZGU4MCIvPgogIDwhLS0gQmFyIC0tPgogIDxyZWN0IHg9IjE1MCIgeT0iMzMzIiB3aWR0aD0iOTYiIGhlaWdodD0iMTYiIHJ4PSI2IiBmaWxsPSIjMmQyZDJkIiBzdHJva2U9IiM0YWRlODAiIHN0cm9rZS13aWR0aD0iMyIvPgogIDwhLS0gUmlnaHQgd2VpZ2h0IHBsYXRlIC0tPgogIDxyZWN0IHg9IjI0NiIgeT0iMzIyIiB3aWR0aD0iMjIiIGhlaWdodD0iMzgiIHJ4PSI1IiBmaWxsPSIjNGFkZTgwIi8+CiAgPHJlY3QgeD0iMjY4IiB5PSIzMjgiIHdpZHRoPSIxMiIgaGVpZ2h0PSIyNiIgcng9IjQiIGZpbGw9IiM0YWRlODAiLz4KCiAgPCEtLSBQaWxvdCBhcm1zIGhvbGRpbmcgYmFyIC0tPgogIDxwYXRoIGQ9Ik0yMzIgMzEwIFEyMDAgMzE4IDE2OCAzMzYiIHN0cm9rZT0iIzRhZGU4MCIgc3Ryb2tlLXdpZHRoPSIxMCIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPHBhdGggZD0iTTI4MCAzMTAgUTMwMCAzMTggMjQ0IDMzNiIgc3Ryb2tlPSIjNGFkZTgwIiBzdHJva2Utd2lkdGg9IjEwIiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KCiAgPCEtLSBNb3RvciBwYWNrIG9uIGJhY2sgLS0+CiAgPHJlY3QgeD0iMjI4IiB5PSIzMjAiIHdpZHRoPSI1NiIgaGVpZ2h0PSI0MiIgcng9IjgiIGZpbGw9IiMxYTFhMWEiIHN0cm9rZT0icmdiYSg3NCwyMjIsMTI4LDAuMykiIHN0cm9rZS13aWR0aD0iMyIvPgogIDwhLS0gUHJvcGVsbGVyIC0tPgogIDxjaXJjbGUgY3g9IjI1NiIgY3k9IjM4MiIgcj0iNiIgZmlsbD0iIzRhZGU4MCIvPgogIDxsaW5lIHgxPSIyNTYiIHkxPSIzNzIiIHgyPSIyNTYiIHkyPSIzNjIiIHN0cm9rZT0iIzRhZGU4MCIgc3Ryb2tlLXdpZHRoPSI1IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8bGluZSB4MT0iMjU2IiB5MT0iMzkyIiB4Mj0iMjU2IiB5Mj0iNDAyIiBzdHJva2U9IiM0YWRlODAiIHN0cm9rZS13aWR0aD0iNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPGxpbmUgeDE9IjI0NiIgeTE9IjM4MiIgeDI9IjIzNiIgeTI9IjM4MiIgc3Ryb2tlPSIjNGFkZTgwIiBzdHJva2Utd2lkdGg9IjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxsaW5lIHgxPSIyNjYiIHkxPSIzODIiIHgyPSIyNzYiIHkyPSIzODIiIHN0cm9rZT0iIzRhZGU4MCIgc3Ryb2tlLXdpZHRoPSI1IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KCiAgPCEtLSBHcm91bmQvc2hhZG93IC0tPgogIDxlbGxpcHNlIGN4PSIyNTYiIGN5PSI0NjAiIHJ4PSIxMDAiIHJ5PSIxMCIgZmlsbD0icmdiYSg3NCwyMjIsMTI4LDAuMDgpIi8+Cjwvc3ZnPgo=";
+  var iconUrl = "data:image/svg+xml;base64," + iconB64;
+  
+  // Apple touch icon
+  document.getElementById('apple-icon').href = iconUrl;
+  
+  // Web manifest
+  var manifest = {
+    name: "Entrena",
+    short_name: "Entrena",
+    start_url: ".",
+    display: "standalone",
+    background_color: "#0a0a0a",
+    theme_color: "#0a0a0a",
+    orientation: "portrait",
+    icons: [
+      { src: iconUrl, sizes: "512x512", type: "image/svg+xml", purpose: "any maskable" }
+    ]
+  };
+  var blob = new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'});
+  document.getElementById('pwa-manifest').href = URL.createObjectURL(blob);
+})();
+</script>
 <style>
 :root{--bg:#0a0a0a;--bg2:#141414;--bg3:#1e1e1e;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.15);--text:#f0f0f0;--text2:#888;--text3:#555;--green:#4ade80;--green-dim:rgba(74,222,128,0.12);--green-b:rgba(74,222,128,0.3);--amber:#fbbf24;--amber-dim:rgba(251,191,36,0.12);--r:12px;--rs:8px}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -294,10 +321,10 @@ var WEEK=[
 var ICO_CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
 var ICO_CHEV='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
 
-var ST={currentDay:0,currentEx:0,currentWeight:0,currentRPE:null,sessionSets:{},history:[],weights:{},completedDays:[],weekNum:1};
+var ST={currentDay:0,currentEx:0,currentWeight:0,currentRPE:null,sessionSets:{},history:[],weights:{},currentWeekDays:[],weekNum:1,weekStartDate:null};
 
-function save(){try{localStorage.setItem('entrena_v3',JSON.stringify(ST));}catch(e){}}
-function load(){try{var r=localStorage.getItem('entrena_v3');if(r){var p=JSON.parse(r);ST=Object.assign({},ST,p);}}catch(e){}}
+function save(){try{localStorage.setItem('entrena_v4',JSON.stringify(ST));}catch(e){}}
+function load(){try{var r=localStorage.getItem('entrena_v4');if(r){var p=JSON.parse(r);ST=Object.assign({},ST,p);}}catch(e){}}
 function getW(di,ei){var k=di+'_'+ei;return ST.weights[k]!==undefined?ST.weights[k]:WEEK[di].exercises[ei].dw;}
 function setW(di,ei,w){ST.weights[di+'_'+ei]=Math.max(0,Math.round(w*4)/4);save();}
 
@@ -320,8 +347,10 @@ function renderHome(){
   grid.innerHTML='';
   var today=new Date().getDay();
   var map=[1,2,3,4,5,6,0];
+  var trainingDays=WEEK.filter(function(d){return d.type!=='rest';}).length;
+  var weekComplete=ST.currentWeekDays.length>=trainingDays;
   WEEK.forEach(function(day,i){
-    var done=ST.completedDays.indexOf(i)>=0;
+    var done=ST.currentWeekDays.indexOf(i)>=0;
     var isToday=today===map[i];
     var tagClass=day.type==='strength'?'tag-s':day.type==='mobility'?'tag-m':'tag-r';
     var tagText=day.type==='strength'?'Fuerza':day.type==='mobility'?'Movilidad':'Descanso';
@@ -331,11 +360,28 @@ function renderHome(){
     if(day.type!=='rest'){card.onclick=(function(idx){return function(){openDay(idx);};})(i);}
     grid.appendChild(card);
   });
+  // Show new week button if current week is complete
+  if(weekComplete){
+    var btn=document.createElement('button');
+    btn.className='btn btn-green';
+    btn.style.marginTop='8px';
+    btn.textContent='Empezar semana '+(ST.weekNum+1)+' →';
+    btn.onclick=startNewWeek;
+    grid.appendChild(btn);
+  }
   var totalVol=ST.history.reduce(function(a,s){return a+(s.volume||0);},0);
   document.getElementById('h-sessions').textContent=ST.history.length;
   document.getElementById('h-vol').textContent=Math.round(totalVol);
-  document.getElementById('h-streak').textContent=ST.completedDays.length;
+  document.getElementById('h-streak').textContent=ST.history.length;
   document.getElementById('week-num').textContent=ST.weekNum;
+}
+
+function startNewWeek(){
+  ST.weekNum+=1;
+  ST.currentWeekDays=[];
+  ST.weekStartDate=new Date().toISOString();
+  save();
+  renderHome();
 }
 
 function openDay(di){
@@ -446,7 +492,7 @@ function finishEx(){
   var day=WEEK[di];
   var allDone=true;
   for(var i=0;i<day.exercises.length;i++){if(!ST.sessionSets[i]||!ST.sessionSets[i].done){allDone=false;break;}}
-  if(allDone){if(ST.completedDays.indexOf(di)===-1)ST.completedDays.push(di);finishSession();}
+  if(allDone){if(ST.currentWeekDays.indexOf(di)===-1)ST.currentWeekDays.push(di);finishSession();}
   else{renderExList();goTo('s-day');}
   save();
 }
@@ -459,7 +505,7 @@ function finishSession(){
     totalSets+=sets.length;
     sets.forEach(function(s){totalVol+=(s.reps||0)*(s.w||0);});
   });
-  ST.history.unshift({date:new Date().toLocaleDateString('es-ES',{day:'numeric',month:'short'}),dayName:day.name,exercises:day.exercises.length,sets:totalSets,volume:totalVol});
+  ST.history.unshift({date:new Date().toLocaleDateString('es-ES',{day:'numeric',month:'short'}),dayName:day.name,exercises:day.exercises.length,sets:totalSets,volume:totalVol,week:ST.weekNum});
   save();
   document.getElementById('done-name').textContent=day.label+' · '+day.name;
   document.getElementById('d-ex').textContent=day.exercises.length;
@@ -482,7 +528,7 @@ function getFeedback(dayName,sets,vol,rpe){
 function renderHistory(){
   var list=document.getElementById('hist-list');
   if(!ST.history.length){list.innerHTML='<div style="color:var(--text3);font-size:14px;padding:1rem 0">Sin sesiones aún.</div>';return;}
-  list.innerHTML=ST.history.map(function(s){return '<div class="hist-row"><div><div class="hist-name">'+s.dayName+'</div><div class="hist-date">'+s.date+'</div></div><div class="hist-stats">'+s.sets+' series<br>'+Math.round(s.volume)+' kg</div></div>';}).join('');
+  list.innerHTML=ST.history.map(function(s){return '<div class="hist-row"><div><div class="hist-name">'+s.dayName+'</div><div class="hist-date">Sem. '+(s.week||1)+' · '+s.date+'</div></div><div class="hist-stats">'+s.sets+' series<br>'+Math.round(s.volume)+' kg</div></div>';}).join('');
 }
 
 function renderProg(){
