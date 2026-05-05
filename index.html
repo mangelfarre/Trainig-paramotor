@@ -188,12 +188,14 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
           <div class="adj" onclick="adjW(1.25)">+</div>
         </div>
       </div>
-      <div style="font-size:11px;color:var(--text3);margin-bottom:4px;padding:0 2px">Ajusta con + / − · se guarda automáticamente</div>
+      <div id="w-combo" style="font-size:12px;color:var(--green);margin-bottom:2px;padding:0 2px;min-height:18px"></div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:4px;padding:0 2px">Ajusta con + / − · salta al peso disponible siguiente</div>
       <div class="section-label">Series completadas</div>
       <div class="sets-grid" id="sets-grid"></div>
       <div class="section-label">Reps realizadas</div>
+      <div id="reps-quick" style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap"></div>
       <div class="reps-row">
-        <input class="reps-input" type="number" id="inp-reps" placeholder="10" min="1" max="50" inputmode="numeric">
+        <input class="reps-input" type="number" id="inp-reps" placeholder="otro" min="1" max="50" inputmode="numeric">
         <button class="btn btn-green" style="width:auto;padding:12px 20px;margin:0" onclick="logSet()">+ Serie</button>
       </div>
       <div class="section-label">Esfuerzo percibido</div>
@@ -280,10 +282,10 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
 // g: true = aviso glaucoma en ese ejercicio
 var WEEK=[
   {label:"Lunes",name:"Pecho + Tríceps",type:"strength",exercises:[
-    {name:"Press con mancuernas",sets:3,reps:"8-10",rest:90,dw:6,muscles:["Pecho","Tríceps","Hombro anterior"],g:false,steps:["Túmbate en el suelo. Mancuernas a la altura del pecho, codos a 45°.","Empuja hacia arriba espirando. No bloquees los codos al final.","Baja en 3 segundos inspirando. Cabeza siempre apoyada en el suelo.","Nunca aguantes la respiración: espira al subir, inspira al bajar."]},
+    {name:"Press con mancuernas",sets:3,reps:"8-10",rest:90,dw:6.15,muscles:["Pecho","Tríceps","Hombro anterior"],g:false,steps:["Túmbate en el suelo. Mancuernas a la altura del pecho, codos a 45°.","Empuja hacia arriba espirando. No bloquees los codos al final.","Baja en 3 segundos inspirando. Cabeza siempre apoyada en el suelo.","Nunca aguantes la respiración: espira al subir, inspira al bajar."]},
     {name:"Flexiones en pared",sets:3,reps:"8-10",rest:60,dw:0,muscles:["Pecho","Tríceps","Core"],g:false,steps:["De pie frente a la pared, manos a la altura del pecho, brazos extendidos.","Dobla los codos llevando el pecho hacia la pared lentamente.","Empuja de vuelta espirando. Cuerpo recto de cabeza a talones.","Ventaja frente a la flexión en suelo: la cabeza queda siempre por encima del corazón."]},
-    {name:"Extensiones de tríceps sentado",sets:3,reps:"10",rest:60,dw:6,muscles:["Tríceps"],g:false,steps:["Sentado en una silla con respaldo. Sujeta una mancuerna con ambas manos sobre la cabeza.","Flexiona los codos bajando la mancuerna detrás de la cabeza. Codos pegados.","Extiende espirando. Sin mover los hombros ni arquear la espalda.","Mantén la cabeza recta y la mirada al frente en todo momento."]},
-    {name:"Aperturas con mancuernas",sets:3,reps:"10",rest:60,dw:5,muscles:["Pecho","Hombro anterior"],g:false,steps:["Tumbado en el suelo, brazos extendidos, ligera flexión de codo.","Abre los brazos lateralmente en arco amplio. Inspira al bajar.","Para cuando sientas estiramiento en el pecho. Sin forzar.","Cierra los brazos espirando. Cabeza siempre apoyada."]}
+    {name:"Extensiones de tríceps sentado",sets:3,reps:"10",rest:60,dw:6.15,muscles:["Tríceps"],g:false,steps:["Sentado en una silla con respaldo. Sujeta una mancuerna con ambas manos sobre la cabeza.","Flexiona los codos bajando la mancuerna detrás de la cabeza. Codos pegados.","Extiende espirando. Sin mover los hombros ni arquear la espalda.","Mantén la cabeza recta y la mirada al frente en todo momento."]},
+    {name:"Aperturas con mancuernas",sets:3,reps:"10",rest:60,dw:4.9,muscles:["Pecho","Hombro anterior"],g:false,steps:["Tumbado en el suelo, brazos extendidos, ligera flexión de codo.","Abre los brazos lateralmente en arco amplio. Inspira al bajar.","Para cuando sientas estiramiento en el pecho. Sin forzar.","Cierra los brazos espirando. Cabeza siempre apoyada."]}
   ]},
   {label:"Martes",name:"Movilidad + Espalda alta",type:"mobility",exercises:[
     {name:"Cat-Cow sentado",sets:3,reps:"10",rest:30,dw:0,muscles:["Columna","Core"],g:false,steps:["Sentado en una silla, pies apoyados. Manos en las rodillas.","Inspira arqueando la espalda hacia adelante y sacando pecho (vaca).","Espira redondeando la espalda y dejando caer los hombros (gato).","Versión segura para glaucoma: evita la posición a cuatro patas con cabeza colgando."]},
@@ -292,20 +294,20 @@ var WEEK=[
     {name:"Rotación torácica sentado",sets:2,reps:"8 c/lado",rest:30,dw:0,muscles:["Torácica","Core"],g:false,steps:["Sentado en una silla, brazos cruzados sobre el pecho.","Gira el torso hacia la derecha lo máximo posible sin mover la cadera.","Mantén 2 segundos y vuelve al centro. Repite al otro lado.","Movimiento lento y controlado. Cabeza sigue la dirección del torso."]}
   ]},
   {label:"Miércoles",name:"Piernas + Glúteo",type:"strength",exercises:[
-    {name:"Sentadilla con mancuernas",sets:3,reps:"10",rest:90,dw:8,muscles:["Cuádriceps","Glúteo","Core"],g:false,steps:["Pies a anchura de hombros, mancuernas a los lados. Cabeza recta, mirada al frente.","Baja como si fueras a sentarte en una silla. Rodillas siguen la dirección de los pies.","Baja solo hasta donde la espalda permanezca recta. Sin inclinar el torso.","Sube espirando, empujando el suelo con los talones. Nunca aguantes la respiración."]},
-    {name:"Peso muerto con mancuernas limitado",sets:3,reps:"10",rest:90,dw:8,muscles:["Isquiotibiales","Glúteo","Lumbar"],g:true,steps:["De pie, mancuernas frente a los muslos. IMPORTANTE: inclínate solo hasta que las mancuernas lleguen a la rodilla, no más abajo.","La inclinación profunda con cabeza hacia abajo eleva la presión ocular. Rango parcial es suficiente.","Bisagra de cadera controlada: espalda recta, rodillas ligeramente flexionadas.","Sube activando glúteos. Espira al subir, inspira al bajar. Nunca aguantes la respiración."]},
+    {name:"Sentadilla con mancuernas",sets:3,reps:"10",rest:90,dw:7.9,muscles:["Cuádriceps","Glúteo","Core"],g:false,steps:["Pies a anchura de hombros, mancuernas a los lados. Cabeza recta, mirada al frente.","Baja como si fueras a sentarte en una silla. Rodillas siguen la dirección de los pies.","Baja solo hasta donde la espalda permanezca recta. Sin inclinar el torso.","Sube espirando, empujando el suelo con los talones. Nunca aguantes la respiración."]},
+    {name:"Peso muerto con mancuernas limitado",sets:3,reps:"10",rest:90,dw:7.9,muscles:["Isquiotibiales","Glúteo","Lumbar"],g:true,steps:["De pie, mancuernas frente a los muslos. IMPORTANTE: inclínate solo hasta que las mancuernas lleguen a la rodilla, no más abajo.","La inclinación profunda con cabeza hacia abajo eleva la presión ocular. Rango parcial es suficiente.","Bisagra de cadera controlada: espalda recta, rodillas ligeramente flexionadas.","Sube activando glúteos. Espira al subir, inspira al bajar. Nunca aguantes la respiración."]},
     {name:"Sentadilla lateral (suave)",sets:3,reps:"8 c/lado",rest:60,dw:0,muscles:["Aductores","Glúteo","Cuádriceps"],g:false,steps:["De pie, pies juntos. Da un paso lateral pequeño-moderado con el pie derecho.","Flexiona levemente la rodilla derecha. Sin bajar demasiado — rango cómodo.","Vuelve al centro empujando con el talón. Tronco erguido durante todo el movimiento.","Empieza con rango pequeño e incrementa progresivamente."]},
     {name:"Elevación de gemelos de pie",sets:3,reps:"15",rest:45,dw:0,muscles:["Gemelo","Sóleo"],g:false,steps:["De pie cerca de la pared o silla para apoyarte. Pies paralelos.","Eleva los talones subiendo de puntillas. Espira al subir.","Aguanta 1 segundo arriba.","Baja en 2-3 segundos inspirando."]}
   ]},
   {label:"Jueves",name:"Movilidad + Hombros",type:"mobility",exercises:[
     {name:"Círculos de hombro de pie",sets:2,reps:"10 c/lado",rest:20,dw:0,muscles:["Hombro","Manguito rotador"],g:false,steps:["De pie, brazo extendido al lado del cuerpo.","Dibuja círculos amplios hacia adelante. Movimiento lento y controlado.","Aumenta el tamaño del círculo progresivamente.","Cambia de dirección. Cabeza recta, respiración tranquila."]},
-    {name:"Press hombro sentado",sets:3,reps:"10",rest:75,dw:5,muscles:["Hombro","Tríceps","Trapecio"],g:false,steps:["Sentado con respaldo, mancuernas a la altura de los hombros, codos a 90°.","Empuja hacia arriba espirando. No bloquees los codos al llegar arriba.","Baja controladamente en 2-3 segundos inspirando.","Sentado con respaldo: evita el arqueo lumbar y mantén la cabeza neutra."]},
-    {name:"Elevaciones laterales sentado",sets:3,reps:"12",rest:60,dw:3,muscles:["Deltoides lateral"],g:false,steps:["Sentado, mancuernas a los lados con ligera flexión de codo.","Eleva los brazos lateralmente hasta la altura de los hombros espirando.","El movimiento sale del hombro. No encorves el cuello.","Baja en 3 segundos inspirando. Sin balancear el torso."]},
+    {name:"Press hombro sentado",sets:3,reps:"10",rest:75,dw:4.9,muscles:["Hombro","Tríceps","Trapecio"],g:false,steps:["Sentado con respaldo, mancuernas a la altura de los hombros, codos a 90°.","Empuja hacia arriba espirando. No bloquees los codos al llegar arriba.","Baja controladamente en 2-3 segundos inspirando.","Sentado con respaldo: evita el arqueo lumbar y mantén la cabeza neutra."]},
+    {name:"Elevaciones laterales sentado",sets:3,reps:"12",rest:60,dw:2.9,muscles:["Deltoides lateral"],g:false,steps:["Sentado, mancuernas a los lados con ligera flexión de codo.","Eleva los brazos lateralmente hasta la altura de los hombros espirando.","El movimiento sale del hombro. No encorves el cuello.","Baja en 3 segundos inspirando. Sin balancear el torso."]},
     {name:"Estiramiento de cuello y hombros",sets:2,reps:"30s c/lado",rest:15,dw:0,muscles:["Cuello","Trapecio","Hombro"],g:false,steps:["Sentado, inclina la cabeza hacia el hombro derecho suavemente.","Puedes ayudarte con la mano derecha aplicando presión muy suave.","Mantén 30 segundos respirando profundo. Sin forzar.","Repite al otro lado. Estiramiento seguro y relajante."]}
   ]},
   {label:"Viernes",name:"Espalda + Bíceps",type:"strength",exercises:[
-    {name:"Remo a una mano apoyado",sets:3,reps:"10 c/lado",rest:75,dw:8,muscles:["Dorsal","Bíceps","Romboides"],g:false,steps:["Apoya la mano y rodilla del mismo lado en una silla o banco. Espalda paralela al suelo.","Mancuerna en el brazo libre. Cabeza en posición neutra, mirando al suelo.","Tira del codo hacia arriba y atrás juntando el omóplato. Espira al subir.","Baja controladamente. Evita girar el torso. Respira de forma continua."]},
-    {name:"Curl de bíceps sentado",sets:3,reps:"10 c/lado",rest:60,dw:6,muscles:["Bíceps","Braquial"],g:false,steps:["Sentado en una silla con respaldo. Mancuerna en una mano, brazo extendido.","Flexiona el codo girando la palma hacia arriba al subir. Espira al subir.","Lleva la mancuerna al hombro sin mover el codo ni arquear la espalda.","Baja en 3 segundos inspirando. Repite con el otro brazo."]},
+    {name:"Remo a una mano apoyado",sets:3,reps:"10 c/lado",rest:75,dw:7.9,muscles:["Dorsal","Bíceps","Romboides"],g:false,steps:["Apoya la mano y rodilla del mismo lado en una silla o banco. Espalda paralela al suelo.","Mancuerna en el brazo libre. Cabeza en posición neutra, mirando al suelo.","Tira del codo hacia arriba y atrás juntando el omóplato. Espira al subir.","Baja controladamente. Evita girar el torso. Respira de forma continua."]},
+    {name:"Curl de bíceps sentado",sets:3,reps:"10 c/lado",rest:60,dw:6.15,muscles:["Bíceps","Braquial"],g:false,steps:["Sentado en una silla con respaldo. Mancuerna en una mano, brazo extendido.","Flexiona el codo girando la palma hacia arriba al subir. Espira al subir.","Lleva la mancuerna al hombro sin mover el codo ni arquear la espalda.","Baja en 3 segundos inspirando. Repite con el otro brazo."]},
     {name:"Jalón con banda sentado",sets:3,reps:"12",rest:60,dw:0,muscles:["Dorsal","Bíceps"],g:false,steps:["Sentado, fija la banda en alto (puerta). Agarra los extremos con brazos extendidos.","Tira hacia abajo llevando los codos hacia las costillas. Espira al tirar.","Junta los omóplatos al final del movimiento.","Vuelve lentamente resistiendo la tensión. Cabeza recta en todo momento."]},
     {name:"Extensión de cadera en pie",sets:3,reps:"12 c/lado",rest:45,dw:0,muscles:["Glúteo","Lumbar"],g:false,steps:["De pie, apoyado en la pared o silla con ambas manos. Tronco ligeramente inclinado.","Lleva una pierna hacia atrás y arriba, apretando el glúteo al subir. Espira.","Baja lentamente. Sin arquear la zona lumbar ni inclinar el tronco hacia adelante.","Alternativa segura al Superman: trabaja los mismos músculos sin posición boca abajo."]}
   ]},
@@ -321,10 +323,14 @@ var WEEK=[
 var ICO_CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
 var ICO_CHEV='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
 
+var WEIGHT_COMBOS={"0.4":"sin discos","1.4":"1×1.0","1.65":"1×1.25","2.4":"2×1.0","2.65":"1×1.0, 1×1.25","2.9":"2×1.25","3.65":"2×1.0, 1×1.25","3.9":"1×1.0, 2×1.25","4.15":"1×2.5, 1×1.25","4.9":"2×1.0, 2×1.25","5.15":"1×2.5, 1×1.0, 1×1.25","5.4":"1×2.5, 2×1.25","6.15":"1×2.5, 2×1.0, 1×1.25","6.4":"1×2.5, 1×1.0, 2×1.25","6.65":"2×2.5, 1×1.25","7.4":"1×2.5, 2×1.0, 2×1.25","7.65":"2×2.5, 1×1.0, 1×1.25","7.9":"2×2.5, 2×1.25","8.65":"2×2.5, 2×1.0, 1×1.25","8.9":"2×2.5, 1×1.0, 2×1.25","9.15":"3×2.5, 1×1.25","9.9":"2×2.5, 2×1.0, 2×1.25","10.15":"3×2.5, 1×1.0, 1×1.25","10.4":"3×2.5, 2×1.25","11.15":"3×2.5, 2×1.0, 1×1.25","11.4":"3×2.5, 1×1.0, 2×1.25","11.65":"4×2.5, 1×1.25","12.4":"3×2.5, 2×1.0, 2×1.25","12.65":"4×2.5, 1×1.0, 1×1.25","12.9":"4×2.5, 2×1.25","13.65":"4×2.5, 2×1.0, 1×1.25","13.9":"4×2.5, 1×1.0, 2×1.25","14.9":"4×2.5, 2×1.0, 2×1.25"};
+var AVAIL_W=[0.4,1.4,1.65,2.4,2.65,2.9,3.65,3.9,4.15,4.9,5.15,5.4,6.15,6.4,6.65,7.4,7.65,7.9,8.65,8.9,9.15,9.9,10.15,10.4,11.15,11.4,11.65,12.4,12.65,12.9,13.65,13.9,14.9];
+function nearestW(t){if(t===0)return 0;return AVAIL_W.reduce(function(a,b){return Math.abs(b-t)<Math.abs(a-t)?b:a;});}
+function getCombo(w){if(w===0)return "";var k=String(w);return WEIGHT_COMBOS[k]?"■ Discos: "+WEIGHT_COMBOS[k]:"";}
 var ST={currentDay:0,currentEx:0,currentWeight:0,currentRPE:null,sessionSets:{},history:[],weights:{},currentWeekDays:[],weekNum:1,weekStartDate:null};
 
-function save(){try{localStorage.setItem('entrena_v4',JSON.stringify(ST));}catch(e){}}
-function load(){try{var r=localStorage.getItem('entrena_v4');if(r){var p=JSON.parse(r);ST=Object.assign({},ST,p);}}catch(e){}}
+function save(){try{localStorage.setItem('entrena_v5',JSON.stringify(ST));}catch(e){}}
+function load(){try{var r=localStorage.getItem('entrena_v5');if(r){var p=JSON.parse(r);ST=Object.assign({},ST,p);}}catch(e){}}
 function getW(di,ei){var k=di+'_'+ei;return ST.weights[k]!==undefined?ST.weights[k]:WEEK[di].exercises[ei].dw;}
 function setW(di,ei,w){ST.weights[di+'_'+ei]=Math.max(0,Math.round(w*4)/4);save();}
 
@@ -419,7 +425,7 @@ function startNext(){
 
 function openEx(ei){
   ST.currentEx=ei;ST.currentRPE=null;
-  var ex=WEEK[ST.currentDay].exercises[ei];
+  var ex=WEEK[ST.currentDay].exercises[ei];ST._currentEx=ex;
   ST.currentWeight=getW(ST.currentDay,ei);
   document.getElementById('ex-title').textContent=ex.name;
   document.getElementById('ex-sub').textContent=ex.sets+' series · '+ex.reps+' reps';
@@ -435,15 +441,61 @@ function openEx(ei){
 
   document.getElementById('ex-steps').innerHTML=ex.steps.map(function(s,i){return '<div class="step-row"><div class="step-n">'+(i+1)+'</div><div class="step-t">'+s+'</div></div>';}).join('');
   document.getElementById('w-current').textContent=ST.currentWeight;
+  var _wc=document.getElementById('w-combo');if(_wc)_wc.textContent=getCombo(ST.currentWeight);
   document.querySelectorAll('.rpe-b').forEach(function(b){b.classList.remove('sel');});
   document.getElementById('inp-reps').value='';
-  renderSets();goTo('s-exercise');
+  renderSets();goTo('s-exercise');renderQuickReps(ST._currentEx);
 }
 
+
+function renderQuickReps(ex){
+  var container=document.getElementById('reps-quick');
+  if(!container)return;
+  var base=parseInt(ex.reps)||10;
+  var m=ex.reps.match(/(\d+)-(\d+)/);
+  var suggested=[];
+  if(m){var lo=parseInt(m[1]);suggested=[lo,lo+2,lo+4];}
+  else{suggested=[base,base+2,base+4];}
+  container.innerHTML='';
+  // Label
+  var lbl=document.createElement('div');
+  lbl.style.cssText='width:100%;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:4px;';
+  lbl.textContent='Toca para registrar serie';
+  container.appendChild(lbl);
+  suggested.forEach(function(n){
+    var btn=document.createElement('button');
+    btn.type='button';
+    var isTarget=(m&&n===parseInt(m[1]))||(!m&&n===base);
+    btn.style.cssText='flex:1;padding:14px 8px;background:'+(isTarget?'var(--green-dim)':'var(--bg2)')+';border:1px solid '+(isTarget?'var(--green-b)':'var(--border2)')+';border-radius:var(--rs);font-size:18px;font-weight:700;cursor:pointer;color:'+(isTarget?'var(--green)':'var(--text)')+';text-align:center;font-family:inherit;';
+    btn.textContent=n;
+    (function(b,val){
+      function doLog(e){
+        if(e&&e.preventDefault)e.preventDefault();
+        document.getElementById('inp-reps').value=val;
+        logSet();
+      }
+      b.addEventListener('click',doLog);
+      b.addEventListener('touchend',doLog);
+    })(btn,n);
+    container.appendChild(btn);
+  });
+}
 function adjW(delta){
-  ST.currentWeight=Math.max(0,Math.round((ST.currentWeight+delta)*4)/4);
-  document.getElementById('w-current').textContent=ST.currentWeight;
+  var idx=AVAIL_W.indexOf(ST.currentWeight);
+  if(idx===-1){ST.currentWeight=nearestW(ST.currentWeight);}
+  else{
+    var ni=idx+(delta>0?1:-1);
+    ni=Math.max(0,Math.min(AVAIL_W.length-1,ni));
+    ST.currentWeight=AVAIL_W[ni];
+  }
+  updateWeightDisplay();
   setW(ST.currentDay,ST.currentEx,ST.currentWeight);
+}
+function updateWeightDisplay(){
+  document.getElementById('w-current').textContent=ST.currentWeight;
+  var combo=getCombo(ST.currentWeight);
+  var el=document.getElementById('w-combo');
+  if(el)el.textContent=combo;
 }
 
 function renderSets(){
